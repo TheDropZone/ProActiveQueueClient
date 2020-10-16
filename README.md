@@ -30,12 +30,13 @@ at the following architecture/flow:
 
 ## Getting Started
 
-### Maven Dependency:
+### Maven Dependency: 
+Always check for the latest tag in github
 ```java
 <dependency>
   <groupId>com.github.TheDropZone</groupId>
   <artifactId>ProActiveQueueClient</artifactId>
-  <version>Tag</version>
+  <version>0.0.1</version>
 </dependency>
 ```
 
