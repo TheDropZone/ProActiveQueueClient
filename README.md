@@ -27,3 +27,24 @@ at the following architecture/flow:
 3. The messages are transactionally processed across AWS ECS (Fargate) containers.
 4. The AWS ECS cluster scales down as all messages are processed
 
+
+## Getting Started
+
+### Maven Dependency:
+```java
+<dependency>
+  <groupId>com.github.TheDropZone</groupId>
+  <artifactId>ProActiveQueueClient</artifactId>
+  <version>Tag</version>
+</dependency>
+```
+
+### Local Send/Recieve:
+To play around with the library, you can spin up a local embedded broker. 
+The below example shows how to send and recieve with an embedded broker.
+
+```java
+        QueueConfig config = new QueueConfig("vm://localhost?broker.persistent=false",null,null);
+        AsyncMessageTest.factory = config.getActiveMQConnectionFactory();
+        //to-do
+```
