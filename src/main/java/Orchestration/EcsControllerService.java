@@ -45,11 +45,21 @@ public class EcsControllerService {
 
     private AtomicBoolean processing = new AtomicBoolean(false);
 
-    public EcsControllerService(String clusterName, String serviceName, String taskName, String queueName, AwsConfig config){
+    public EcsControllerService(String clusterName,
+                                String serviceName,
+                                String taskName,
+                                String queueName,
+                                AwsConfig config){
         this(clusterName,serviceName,taskName,queueName,config.getECSClient(),config.getCloudWatchClient(),config);
     }
 
-    public EcsControllerService(String clusterName, String serviceName, String taskName, String queueName, AmazonECSClient ecsClient, AmazonCloudWatch cloudwatch, AwsConfig config){
+    public EcsControllerService(String clusterName,
+                                String serviceName,
+                                String taskName,
+                                String queueName,
+                                AmazonECSClient ecsClient,
+                                AmazonCloudWatch cloudwatch,
+                                AwsConfig config){
         this.clusterName = clusterName;
         this.serviceName = serviceName;
         this.taskName = taskName;
