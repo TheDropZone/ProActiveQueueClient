@@ -104,7 +104,7 @@ public class AwsConfig {
     @Data
     @EqualsAndHashCode
     @NoArgsConstructor
-    public class AwsConfigurationValues{
+    public static class AwsConfigurationValues{
         private String awsAccessKey;
         private String awsSecretKey;
         private String awsActiveMQNamespace = "AWS/AmazonMQ";
