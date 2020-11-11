@@ -1,7 +1,7 @@
 package Messaging;
 
-import Configuration.QueueConfig;
-import Connection.MessageClient;
+import com.ProActiveQueue.ProActiveQueueClient.Configuration.QueueConfig;
+import com.ProActiveQueue.ProActiveQueueClient.Connection.MessageClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.*;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -13,11 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.Queue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;

@@ -1,6 +1,6 @@
-package Orchestration;
+package com.ProActiveQueue.ProActiveQueueClient.Orchestration;
 
-import Configuration.AwsConfig;
+import com.ProActiveQueue.ProActiveQueueClient.Configuration.AwsConfig;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.model.*;
 import com.amazonaws.services.ecs.AmazonECSClient;

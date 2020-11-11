@@ -1,6 +1,6 @@
 package Messaging;
 
-import Configuration.QueueConfig;
+import com.ProActiveQueue.ProActiveQueueClient.Configuration.QueueConfig;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;

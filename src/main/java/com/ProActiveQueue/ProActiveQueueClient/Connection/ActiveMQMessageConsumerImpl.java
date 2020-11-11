@@ -1,4 +1,4 @@
-package Connection;
+package com.ProActiveQueue.ProActiveQueueClient.Connection;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -63,7 +63,7 @@ public class ActiveMQMessageConsumerImpl {
 
     /**
      * Closes the async consumers down, so that they are no longer listening for messages. This does not close the
-     * Connection objects in this class.
+     * com.ProActiveQueue.ProActiveQueueClient.Connection objects in this class.
      * @throws JMSException
      */
     public void closeConsumers() throws JMSException {

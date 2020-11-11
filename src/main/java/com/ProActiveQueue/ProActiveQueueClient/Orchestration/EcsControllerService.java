@@ -1,6 +1,6 @@
-package Orchestration;
+package com.ProActiveQueue.ProActiveQueueClient.Orchestration;
 
-import Configuration.AwsConfig;
+import com.ProActiveQueue.ProActiveQueueClient.Configuration.AwsConfig;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.ecs.AmazonECSClient;
 import com.amazonaws.services.ecs.model.*;
@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;

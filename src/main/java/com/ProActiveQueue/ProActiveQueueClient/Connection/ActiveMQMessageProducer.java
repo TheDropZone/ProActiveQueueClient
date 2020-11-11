@@ -1,4 +1,4 @@
-package Connection;
+package com.ProActiveQueue.ProActiveQueueClient.Connection;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

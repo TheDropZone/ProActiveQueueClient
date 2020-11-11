@@ -1,4 +1,4 @@
-package Configuration;
+package com.ProActiveQueue.ProActiveQueueClient.Configuration;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.ActiveMQPrefetchPolicy;

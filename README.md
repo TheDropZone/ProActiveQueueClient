@@ -18,7 +18,7 @@ ground with ActiveMQ with strong opinions on:
 3. ***Minimal Boilerplate:*** Configuring, Receiving, and Sending should require minimal code
 
 
-#### 2. Microservice Queue Orchestration
+#### 2. Microservice Queue com.ProActiveQueue.ProActiveQueueClient.Orchestration
 On the AWS microservice side, this project aims to effortlessly link ***AWS AmazonMQ/ActiveMQ*** with ***AWS ECS Fargate***. The integration goals are aimed 
 at the following architecture/flow:
 

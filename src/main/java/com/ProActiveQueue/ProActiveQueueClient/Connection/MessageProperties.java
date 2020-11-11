@@ -1,4 +1,4 @@
-package Connection;
+package com.ProActiveQueue.ProActiveQueueClient.Connection;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package Configuration;
+package com.ProActiveQueue.ProActiveQueueClient.Configuration;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
