@@ -39,7 +39,7 @@ public class AwsConfig {
             throw new IllegalStateException("You must provide an AwsConfigurationValues config to setConfiguration()");
         }
         final String access = values.awsAccessKey;
-        final String secret = values.awsAccessKey;
+        final String secret = values.awsSecretKey;
         return new AWSCredentialsProvider() {
             @Override
             public AWSCredentials getCredentials() {
