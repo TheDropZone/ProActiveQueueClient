@@ -15,15 +15,32 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
+ * <p>
  * This class is a mid-level abstraction over the activeMQ message library. It allows for Topic or Queue
  * connection, filtering using MessageProperties, and async or sync message operations.
+ * </p>
  *
- * Low Level: ActiveMQMessageConsumerImpl, ActiveMQMessageProducer
- * Mid Level: MessageClient
- * High Level: A Destination specific class that extends MessageClient and overrides methods
+ * <ul>
+ *     <li>
+ *         <b>Low Level</b>: ActiveMQMessageConsumerImpl, ActiveMQMessageProducer
+ *     </li>
+ *     <li>
+ *         <b>Mid Level</b>: MessageClient
+ *     </li>
+ *     <li>
+ *        <b>High Level</b>: A Destination specific class that extends MessageClient and overrides methods
+ *     </li>
+ * </ul>
  *
+ * <p>
+ *     In addition to providing get and send message requests, you can also send batched messages or request a
+ *     certain number of batched messages.
+ * </p>
+ *
+ * <p>
  * As a reminder, if you do not extend MessageClient, do to generics, you will need to provide
  * the class of the message object that will be sent in the queue/topic.
+ * </p>
  *
  *
  * @param <P> the class of the message object that will be sent in the queue/topic.
@@ -80,14 +97,22 @@ public class MessageClient<P> {
         this.clazz = clazz;
     }
 
+    /**
+     * This method can be called to close down the low level ActiveMQ consumer and producer
+     * @throws JMSException
+     */
     public void close() throws JMSException {
         this.messageConsumer.closeConsumers();
         this.messageProducer.close();
     }
 
     /**
-     * ASYNC Message Receiver
-     * This method allows you to register an Asynchronous message listener to this queue.
+     * <b>
+     *     ASYNC Message Receiver
+     * </b>
+     * <p>
+     *     This method allows you to register an Asynchronous message listener to this queue.
+     * </p>
      *
      * @param onMessage a lambda function to consume messages as they become available
      */
@@ -96,9 +121,13 @@ public class MessageClient<P> {
     }
 
     /**
-     * ASYNC Message Receiver
+     * <b>
+     *     ASYNC Message Receiver
+     * </b>
+     * <p>
      * This method allows you to register an Asynchronous message listener to this queue. Additionally, you can provide
-     * MessageProperties in order to filter the messages that would be received
+     * MessageProperties in order to filter the messages that would be received.
+     * </p>
      *
      * @param onMessage a lambda function to consume messages as they become available
      * @param props an Object that holds message filters that are applied to the returned messages
@@ -107,10 +136,42 @@ public class MessageClient<P> {
         messageConsumer.onMessageReceived(onMessage,clazz,props);
     }
 
+    /**
+     * <b>
+     *     SYNCHRONOUS Message Receiver
+     * </b>
+     * <p>
+     *     This method allows you to synchronously request a single message, transactional safe. Plain and simple
+     * </p>
+     * <p>
+     *     If your consumer method throws an error while processing, the message will be rolled back to the
+     *     message broker for another consumer to use
+     * </p>
+     * @param onMessage a method that will act on a recieved message if there is one available
+     * @throws IOException
+     * @throws JMSException
+     */
     public void getMessage(Consumer<P> onMessage) throws IOException, JMSException {
         getMessage(onMessage,null);
     }
 
+    /**
+     * <b>
+     *     SYNCHRONOUS Message Receiver
+     * </b>
+     * <p>
+     *     This method allows you to synchronously request a single message, based on one or more filtering options
+     *     based on the provided MessageProperties object, in a transaction safe environment.
+     * </p>
+     * <p>
+     *     If your consumer method throws an error while processing, the message will be rolled back to the
+     *     message broker for another consumer to use
+     * </p>
+     * @param onMessage a method that will act on a recieved message if there is one available that fits the filter
+     * @param props a <b>MessageProperties</b> object that holds one or more filters for the requested message
+     * @throws IOException
+     * @throws JMSException
+     */
     public void getMessage(Consumer<P> onMessage, MessageProperties props) throws IOException, JMSException {
         messageConsumer.getMessages((onMessages) -> {
             try{
@@ -129,8 +190,14 @@ public class MessageClient<P> {
      * This method allows you to get a transactional bound list of messages, equivalent to messageCount in length, if available.
      * If that amount is not available, it will return a smaller amount, according to availability.
      * The method handles the acknowledgment and commit/rollback of the transaction in case things go bad.
+     * <p>
+     *     If your consumer method throws an error while processing, the message will be rolled back to the
+     *     message broker for another consumer to use
+     * </p>
+     * <p>
+     *     <i>Use getMessages(onMessage, messageCount, props) to apply filters to the messages</i>
+     * </p>
      *
-     * Use getMessages(onMessage, messageCount, props) to apply filters to the messages
      * @param onMessage A Consumer lambda function to run on the returned List of <P> objects
      * @param messageCount the number of messages to try to return. If the queue doesn't have that many messages, it returns
      *                     all the messages in the queue
@@ -144,15 +211,31 @@ public class MessageClient<P> {
      * If that amount is not available, it will return a smaller amount, according to availability.
      * The method handles the acknowledgment and commit/rollback of the transaction in case things go bad.
      *
+     * <p>
+     *     If your consumer method throws an error while processing, the message will be rolled back to the
+     *     message broker for another consumer to use
+     * </p>
+     *
+     * <p>
      * Additionally, this method allows you to add filters to the messages you are requesting. These filters are
      * identified in the MessageProperties class which should be accessed through the builder() method. Some available
      * selectors are as follows:
-     * MATCHES (make sure all messages have the same value for a given property)
-     * EQUALS (make sure all messages have a given value for a given property)
-     * GREATER_THAN (make sure all messages have a greater numeric value than given for a given property)
-     * LESS_THAN (make sure all messages have a lesser numeric value than given for a given property)
+     * </p>
+     * <ul>
+     *     <li>
+     *         <b>MATCHES</b> (make sure all messages have the same value for a given property)
+     *     </li>
+     *     <li>
+     *         <b>EQUALS</b> (make sure all messages have a given value for a given property)
+     *     </li>
+     *     <li>
+     *         <b>GREATER_THAN</b> (make sure all messages have a greater numeric value than given for a given property)
+     *     </li>
+     *     <li>
+     *         <b>LESS_THAN</b> (make sure all messages have a lesser numeric value than given for a given property)
+     *     </li>
+     * </ul>
      *
-     * Use getMessages(onMessage, messageCount, props) to apply filters to the messages
      * @param onMessage A Consumer lambda function to run on the returned List of <P> objects
      * @param messageCount the number of messages to try to return. If the queue doesn't have that many messages, it returns
      *                     all the messages in the queue
@@ -162,30 +245,105 @@ public class MessageClient<P> {
         messageConsumer.getMessages(onMessage,messageCount, clazz,props);
     }
 
-    public void send(P host) throws JsonProcessingException, JMSException {
-        send(host, null);
+    /**
+     * <p>
+     *     This method allows you to send a single message to the broker and ensure that it is received
+     * </p>
+     * <p>
+     *     <i>If you want to add filterable message properties to the message, use send(message,props)</i>
+     * </p>
+     * @param message an object of type <b>{@literal <}P{@literal >}</b> to send
+     * @throws JsonProcessingException
+     * @throws JMSException
+     */
+    public void send(P message) throws JsonProcessingException, JMSException {
+        send(message, null);
     }
 
-    public void send(P host, Properties props) throws JsonProcessingException, JMSException {
+    /**
+     * <p>
+     *     This method allows you to send a single message to the broker and ensure that it is received. Additionally,
+     *     it allows you to attach properties to the message that can be filtered on later by a consumer
+     * </p>
+     * @param message an object of type <b>{@literal <}P{@literal >}</b> to send
+     * @param props a Properties object that contains filterable information about the message.
+     * @throws JsonProcessingException
+     * @throws JMSException
+     */
+    public void send(P message, Properties props) throws JsonProcessingException, JMSException {
         if(props != null){
-            messageProducer.send(host, props);
+            messageProducer.send(message, props);
         }else{
-            messageProducer.send(host);
+            messageProducer.send(message);
         }
         messageProducer.commit();
     }
 
-    public void sendAll(List<P> hosts) throws JsonProcessingException, JMSException {
-        sendAll(hosts,null);
+    /**
+     * <p>
+     *     This method allows you to send a list of messages to the broker and ensure that they all are received
+     * </p>
+     * <p>
+     *     <i>If you want to add filterable message properties to the messages, use sendAll(message,getProperty)</i>
+     * </p>
+     * @param messages a list of Objects of type <b>{@literal <}P{@literal >}</b> to send
+     * @throws JsonProcessingException
+     * @throws JMSException
+     */
+    public void sendAll(List<P> messages) throws JsonProcessingException, JMSException {
+        sendAll(messages,null);
     }
 
-    public void sendAll(List<P> hosts, Function<P, Properties> getProperty) throws JsonProcessingException, JMSException {
-        for(P host : hosts){
-            Properties props = Optional.ofNullable(getProperty).map(getProp -> getProp.apply(host)).orElse(null);
+    /**
+     * <p>
+     *     This method allows you to send a list of messages to the broker and ensure that they all are received.
+     *     Additionally, it allows you to attach properties to these message objects that can be filtered on
+     *     later by a consumer. Because a list of messages is being provided, you must provide a Function
+     *     that can be used to get the property for each message object.
+     * </p>
+     * <p>
+     *     The <b>getProperty</b> method is typically provided as a lambda function that takes the message
+     *     object as input and outputs a Properties object with any desired properties attached.
+     * </p>
+     * <p>
+     *     <b>Example:</b>
+     *     <ul>
+     *         <li>
+     *             message has a method <i>getScanType()</i> that returns a string
+     *         </li>
+     *         <li>
+     *             NmapScanType.class.getSimpleName() is the name of the property that will be filtered on later
+     *         </li>
+     *     </ul>
+     * </p>
+     * <p></p>
+     * <pre>
+     * (message) -> {
+     *      if(message.getScanType() != null){
+     *          Properties props = new Properties();
+     *          props.setProperty(NmapScanType.class.getSimpleName(),
+     *              message.getScanType().toString());
+     *          return props;
+     *      }else{
+     *          return null;
+     *      }
+     *  }
+     * </pre>
+     * <p></p>
+     * <p>If desired, you can add as many Properties for that messsage as you would like</p>
+     *
+     * @param messages a list of Objects of type <b>{@literal <}P{@literal >}</b> to send
+     * @param getProperty a Funcion that takes a message object and returns a Properties object. See above for Example
+     * @throws JsonProcessingException
+     * @throws JMSException
+     */
+    public void sendAll(List<P> messages, Function<P, Properties> getProperty) throws JsonProcessingException, JMSException {
+        for(P message : messages){
+            Properties props = Optional.ofNullable(getProperty).map(getProp -> getProp.apply(message)).orElse(null);
             if(props != null){
-                messageProducer.send(host, props);
+                messageProducer.send(message, props);
             }else{
-                messageProducer.send(host);
+                messageProducer.send(message);
             }
         }
         messageProducer.commit();

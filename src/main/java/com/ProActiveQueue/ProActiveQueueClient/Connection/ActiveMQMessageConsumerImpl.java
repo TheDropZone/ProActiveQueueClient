@@ -73,11 +73,13 @@ public class ActiveMQMessageConsumerImpl {
     }
 
     /**
-     * ASYNC Message Receive
-     * @param onMessage
-     * @param clazz
-     * @param properties
-     * @param <T>
+     * <b>ASYNC Message Receive</b>
+     * <p>This consumer operates completely within a transaction and will rollback all messages if there is an
+     * Exception during message processing <i>(While executing the onMessage method</i></p>
+     * @param onMessage a consumer method (typically lambda) that will process a message when received
+     * @param clazz The class of the message that will be received, for deserialization
+     * @param properties a MessageProperties object that is used to filter the requested messages
+     * @param <T> The message class
      */
     public <T> void onMessageReceived(Consumer<T> onMessage, Class<T> clazz, MessageProperties properties) throws JMSException {
         Session session = getSession(true, Session.CLIENT_ACKNOWLEDGE, true);
@@ -120,12 +122,16 @@ public class ActiveMQMessageConsumerImpl {
     }
 
     /**
-     * SYNCHRONOUS Message Receive
-     * @param onMessage
+     * <b>
+     *     SYNCHRONOUS Message Receive
+     * </b>
+     * <p>This consumer operates completely within a transaction and will rollback all messages if there is an
+     * Exception during message processing <i>(While executing the onMessage method</i></p>
+     * @param onMessage a consumer method (typically lambda) that will process the list of messages when received
      * @param numberOfMessages
-     * @param clazz
-     * @param props
-     * @param <T>
+     * @param clazz The class of the message that will be received, for deserialization
+     * @param props a MessageProperties object that is used to filter the requested messages
+     * @param <T>  The message class
      * @throws JMSException
      * @throws JsonProcessingException
      */

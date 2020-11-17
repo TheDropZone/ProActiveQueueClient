@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class EcsControllerService {
 
@@ -35,6 +36,8 @@ public class EcsControllerService {
     private AwsConfig config;
 
     private MetricsService metrics;
+
+    private Consumer<Exception> onError;
 
     private Integer MESSAGES_PER_TASK = 10;
     private Integer MAX_TASKS = 50;
@@ -72,6 +75,14 @@ public class EcsControllerService {
         startController(MIN_TASKS, MAX_TASKS, MESSAGES_PER_TASK);
     }
 
+    /**
+     * Add a callback function that will be called if an error occurs during execution of the control loop.
+     * @param onError A method that is executed on error and is provided with the resulting Exception object
+     */
+    public void onErrorHandler(Consumer<Exception> onError){
+        this.onError = onError;
+    }
+
     public void startController(Integer minimumTaskCount, Integer maximumTaskCount, Integer messagesPerTask){
         startController(minimumTaskCount,maximumTaskCount,messagesPerTask,null,null);
     }
@@ -89,10 +100,14 @@ public class EcsControllerService {
             if(!processing.get()){
                 processing.set(true);
                 try {
-                    setRunningTaskCount(calculateDesiredTaskCount());
-                } catch (InterruptedException e) {
+                    Integer desiredTaskCount = calculateDesiredTaskCount();
+                    if(desiredTaskCount != null){
+                        setRunningTaskCount(desiredTaskCount);
+                    }
+                }catch (Exception e){
                     e.printStackTrace();
-                }finally {
+                    this.onError.accept(e);
+                }finally{
                     processing.set(false);
                 }
             }
@@ -106,9 +121,11 @@ public class EcsControllerService {
 
     private Integer calculateDesiredTaskCount(){
         Double requests = metrics.getRequestsInQueue();
-        Double tasks = metrics.getRunningTasks();
-        Integer desiredTaskCount = Double.valueOf(Math.ceil(requests / MESSAGES_PER_TASK)).intValue();
-        return Ints.constrainToRange(desiredTaskCount,MIN_TASKS,MAX_TASKS);
+        if(requests != null){
+            Integer desiredTaskCount = Double.valueOf(Math.ceil(requests / MESSAGES_PER_TASK)).intValue();
+            return Ints.constrainToRange(desiredTaskCount,MIN_TASKS,MAX_TASKS);
+        }
+        return null;
     }
 
     private void setRunningTaskCount(Integer desiredCount) throws InterruptedException {
