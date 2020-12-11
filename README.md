@@ -36,7 +36,7 @@ Always check for the latest tag in github
 <dependency>
   <groupId>com.github.TheDropZone</groupId>
   <artifactId>ProActiveQueueClient</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.6</version>
 </dependency>
 ```
 
